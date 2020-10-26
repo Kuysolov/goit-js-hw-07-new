@@ -45,13 +45,14 @@ function onClickOpenModal(evt) {
   if (evt.target.nodeName !== 'IMG') {
     return;
   }
-  //  document.addEventListener("keydown", closeModal);
-
+  
   onOpenModal();
   refs.modalImage.src = evt.target.dataset.source;
   refs.modalImage.alt = evt.target.alt;
 
   document.addEventListener("keydown", onEscKeyClosePress);
+  document.addEventListener("keydown", onArrowPressSibling);
+  
 }
  
 function onOpenModal() {
@@ -60,9 +61,10 @@ function onOpenModal() {
 
 function onCloseModal() { 
   document.removeEventListener('keydown', onEscKeyClosePress);
+  document.removeEventListener('keydown', onArrowPressSibling);
   refs.modal.classList.remove('is-open');
   refs.modalImage.src = '';
-}
+  }
 
 function onEscKeyClosePress(evt) {
   if (evt.code === 'Escape') {
@@ -76,3 +78,31 @@ function onBackdropCloseClick(evt) {
   }
 }
 
+function onArrowPressSibling(evt) {
+  const currentItem = images.findIndex(({original}) => original === refs.modalImage.src)
+//  console.log(refs.modalImage)
+  if (evt.code === 'ArrowRight') {
+    // onLeftSide();
+    refs.modalImage.src = `${images[(currentItem + 1) % images.length].original}`;
+  } else if (evt.code === 'ArrowLeft') {
+    // onRightSide();
+    if (currentItem === 0) {
+    refs.modalImage.src = `${images[(currentItem + images.length - 1) % images.length].original}`;
+  } else {
+    refs.modalImage.src = `${images[(currentItem + 1) % images.length].original}`;
+   }
+  }
+}
+
+// function onRightSide() { 
+//   refs.modalImage.src = `${images[(currentItem + 1) % images.length].original}`;
+  
+// }
+
+// function onLeftSide() { 
+//   if (currentItem === 0) {
+//     refs.modalImage.src = `${images[(currentItem + images.length - 1) % images.length].original}`;
+//   } else {
+//     refs.modalImage.src = `${images[(currentItem + 1) % images.length].original}`;
+//    }
+// }
