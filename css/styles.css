@@ -1,301 +1,140 @@
-/* цвет основного текста #757575 */
-/* вторичный цвет текста #212121 */
-/* белый #ffffff */
-/* цвет акцента #2196F3 */
-/* цвет подложки в занятости rgba(47, 48, 58, 0.8) */
-/* цвет логотипов #AFB1B8; */
-/* цвет бекграунда под фото #F5F4FA; */
-/* цвет футора #2F303A; */
-/* цвет контактов в футоре rgba(255, 255, 255, 0.6); */
-/* цвет иконок соцсетей в футоре rgba(255, 255, 255, 0.1); */
-/* цвет надписи создателей сайта rgba(255, 255, 255, 0.4); */
-
-
-
 :root {
-    --primarli-text-color: #757575;
-    --title-text-color: #212121;
-    --accent-color: #2196F3;
-    --primarly-white-color: #ffffff;
-    --busyness-bg: rgba(47, 48, 58, 0.8);
-    --logo-color: #AFB1B8;
-    --back-graund-developers-color: #F5F4FA;
-    --footer-color: #2F303A;
-    --contacts-color: rgba(255, 255, 255, 0.6);
-    --social-icon-color: rgba(255, 255, 255, 0.1);
-    --developers-text-color: rgba(255, 255, 255, 0.4);
+  --timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  --animation-duration: 250ms;
+}
 
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
 }
 
 body {
-    background-color: var(--primarly-white-color);
-    color: var(--primarli-text-color);
-
-    font-family: Roboto, sans-serif;
-    letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+  background-color: #fff;
+  color: #212121;
 }
 
-li {
-    list-style: none;
+.gallery {
+  display: grid;
+  width: 1200px;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-auto-rows: 240px;
+  grid-gap: 12px;
+  padding: 0;
+  list-style: none;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.logo {
-    color: var(--title-text-color);
-    font-family: Raleway;
-    font-size: 26px;
-    line-height: 1.2;
-    text-decoration: none;
+.gallery__item {
+  position: relative;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2),
+    0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
 
-.logo > span {
-color: var(--accent-color);
+.gallery__image:hover {
+  transform: scale(1.03);
 }
 
-footer .logo {
-    color: var(--primarly-white-color);
+.gallery__image {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transition: transform var(--animation-duration) var(--timing-function);
 }
 
-/* site-nav */
-
-.site-nav .link {
-    color: var(--title-text-color);
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 1.14;
-    letter-spacing: 0.02em;
-    text-decoration: none;
-}
-.site-nav .link:hover, 
-.site-nav .link:focus
-{
-color: var(--accent-color);
+.gallery__link {
+  display: block;
+  text-decoration: none;
+  height: 100%;
 }
 
-.site-nav .link.current {
-    color: var(--accent-color);
+.gallery__link:hover {
+  cursor: zoom-in;
 }
 
-/* auth-nav */
-
-.auth-nav .link {
-    color: var(--primarli-text-color);
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 1.14;
-    letter-spacing: 0.02em;
-    text-decoration: none; 
-}
-.auth-nav a:hover {
-    color: var(--accent-color);
-}
-
-
-/* герой */
-
-.hero .hero-title{
-    color: var(--primarly-white-color);
-    background-color: var(--accent-color);
-    font-weight: 900;
-    font-size: 44px;
-    line-height: 1.36;
-    text-align: center;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+/* Lightbox */
+.lightbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--animation-duration) var(--timing-function);
 }
 
-.button {
-    color: var(--primarly-white-color);
-    background-color: var(--accent-color);
-    font-family: inherit; 
-    font-weight: bold;
-    font-size: 16px;
-    line-height: 1.88;
-    align-items: center;
-    text-align: center;
-    letter-spacing: 0.06em;
-    text-decoration: none; 
-    display: inline-block;
-    padding: 10px 32px;
-    border-radius: 4px;
+.lightbox.is-open {
+  opacity: 1;
+  pointer-events: initial;
 }
 
-.button:hover,
-.button:focus {
-    color: var(--accent-color);
-    background-color: var(--primarly-white-color);
-    border: 1px solid var(--accent-color);
-    
-}
-/* секция */
-
-.section .section-title {
-    color: var(--title-text-color);
-    font-weight: bold;
-    font-size: 36px;
-    line-height: 1.17;
-    text-align: center;
+.lightbox__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
-.section .title {
-    color: var(--title-text-color);
-    font-weight: bold;
-    font-size: 14px;
-    line-height: 1.14;
-    text-transform: uppercase;
-}
-    
-.advantages-list p {
-    font-size: 14px;
-    line-height: 1.71;
+.lightbox__content {
+  transform: scale(0.95);
+  transition: transform var(--animation-duration) var(--timing-function);
 }
 
-
-/* список преимуществ */
-
-.advantages-list .images:hover {
-    background-color: var(--accent-color);
-    padding: 25px 106.24px;
-
-}
-/* чем мы занимаемся*/
-
-.list .title {
-    color:  var(--primarly-white-color);
-    background-color: rgba(47, 48, 58, 0.8);
-    font-weight: bold;
-    font-size: 14px;
-    line-height: 1.14;
-    text-align: center;
-        text-transform: uppercase;
+.lightbox.is-open .lightbox__content {
+  transform: scale(1);
 }
 
-/* разработчики */
-
-.developers {
-    background-color: var(--back-graund-developers-color);
+.lightbox__image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-height: 100vh;
+  max-width: 100vw;
 }
 
-.section .subject {
-    color: var(--title-text-color);
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 1.19;
-    text-align: center;
+.lightbox__button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color var(--animation-duration) var(--timing-function);
+  outline: none;
+  background-image: url('../images/icon-close.svg');
+  background-position: center;
+  background-size: 60%;
+  background-repeat: no-repeat;
 }
 
-.section p {
-    font-size: 16px;
-    line-height: 1.19;
-    text-align: center;
+.lightbox__button:hover,
+.lightbox__button:focus {
+  background-color: rgba(0, 0, 0, 0.5);
 }
-
-section .icon {
-    color: var(--logo-color);
-    text-decoration: none; 
-    }
-.icon:hover {
-    color: var(--accent-color);
-}
-
-/* наши клиенты */
-
-
-/* футор */
-
-footer {
-    background-color: var(--footer-color);
-}
-
-address {
-    color: var(--primarly-white-color);
-    font-style: inherit;
-    font-size: 14px;
-    line-height: 1.71;
-    text-decoration: none; 
-}
-
-.contacts {
-    color: var(--contacts-color);
-    font-size: 14px;
-    line-height: 1.71;
-    text-decoration: none
-}
-
-.contacts:hover {
-    color: var(--accent-color);
-}
-
-footer .title {
-    color: var(--primarly-white-color);
-    font-weight: bold;
-    font-size: 14px;
-    line-height: 1.17;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-}
-
-
-footer .icon {
-    color: var( --social-icon-color);
-    text-decoration: none;
-    }
-
-footer .text {
-    color: var(--developers-text-color);
-    font-size: 12px;
-    line-height: 2;
-    text-align: center;
-}
-
-
-
-
-
-
-
-/* страница портфолио */
-
-.portfolio .button {
-    color: var(--title-text-color);
-    background-color: var(--back-graund-developers-color);
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 1.62;
-    text-align: center; 
-}
-
-.portfolio .button:hover,
-.portfolio .button:focus {
-    color: var(--primarly-white-color);
-    background-color:var(--accent-color);
-}
-
-.portfolio-list a {
-    text-decoration: none;
-}
-
-.portfolio-title {
-    color: var(--title-text-color);
-    font-weight: bold;
-    font-size: 18px;
-    line-height: 2;
-    letter-spacing: 0.06em;
-    }
-
-.portfolio .subject {
-    color: var(--primarli-text-color);
-    font-size: 16px;
-    line-height: 1.87;
-}
-    
-.portfolio .text {
-    color: var(--title-text-color);
-    font-size: 18px;
-    line-height: 1.56;
-}
-
-.portfolio .text:hover {
-    color: var(--primarly-white-color);
-    background-color: var(--accent-color);
-}
-
