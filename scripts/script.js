@@ -1,23 +1,16 @@
 import images from "./gallery-items.js";
 
+
 const refs = {
-  galleryContainer: document.querySelector('ul.js-gallery'),
-  modal: document.querySelector('.js-lightbox'),
-  modalImage: document.querySelector('.lightbox__image'),
-  closeModalBtn: document.querySelector('.lightbox__button'),
-  lightboxOverlay: document.querySelector('.lightbox__overlay'),
+  galleryContainer: document.querySelector("ul.js-gallery"),
+  modal: document.querySelector('div.lightbox'),
+  button: document.querySelector('button[data-action="close-lightbox"]'),
+  lightbox: document.querySelector('.lightbox__image'),
+  overlay: document.querySelector('div.lightbox__overlay'),
 }
 
-// Создание и рендер разметки по массиву данных и предоставленному шаблону.
-
-const elGalleryMarkup = createGalleryElMarkup(images);
-
-refs.galleryContainer.insertAdjacentHTML('beforeend', elGalleryMarkup);
-
-function createGalleryElMarkup(images) { 
-  return images.map(({ preview, original, description }) => { 
-    return `
-    <li class="gallery__item">
+const createGalleryElement = ({ preview, original, description }) => {
+  return `<li class="gallery__item">
   <a
     class="gallery__link"
     href="${original}"
@@ -29,80 +22,178 @@ function createGalleryElMarkup(images) {
       alt="${description}"
     />
   </a>
-</li>
-    `;
-  })
-.join('');
+</li>`
 }
 
-refs.galleryContainer.addEventListener("click", onClickOpenModal);
-refs.closeModalBtn.addEventListener("click", onCloseModal);
-refs.lightboxOverlay.addEventListener('click', onBackdropCloseClick);
+const createGalleryElementsMarkup = pictures => {
+  return pictures.map(createGalleryElement).join('')
+ }
 
-function onClickOpenModal(evt) {
-  evt.preventDefault();
+const markupElementsGallery = createGalleryElementsMarkup(images)
 
-  if (evt.target.nodeName !== 'IMG') {
-    return;
-  }
-  
-  onOpenModal();
-  refs.modalImage.src = evt.target.dataset.source;
-  refs.modalImage.alt = evt.target.alt;
+refs.galleryContainer.insertAdjacentHTML('beforeend', markupElementsGallery)
 
-  document.addEventListener("keydown", onEscKeyClosePress);
-  document.addEventListener("keydown", onArrowPressSibling);
-  
-}
- 
-function onOpenModal() {
-  refs.modal.classList.add("is-open")
-};
 
-function onCloseModal() { 
-  document.removeEventListener('keydown', onEscKeyClosePress);
-  document.removeEventListener('keydown', onArrowPressSibling);
-  refs.modal.classList.remove('is-open');
-  refs.modalImage.src = '';
+refs.galleryContainer.addEventListener('click', onImageClick)
+refs.button.addEventListener('click', onModalClose)
+refs.overlay.addEventListener('click', onModalBackdropClose)
+
+let currentImgIdx = null
+
+function onImageClick (event) { 
+  event.preventDefault();
+  const { dataset, alt, nodeName } = event.target
+  if (nodeName !== "IMG") return;
+  onModalOpen(dataset.source, alt)
   }
 
-function onEscKeyClosePress(evt) {
-  if (evt.code === 'Escape') {
-    onCloseModal();
-    }
+function onModalOpen(source, alt) { 
+  refs.modal.classList.add('is-open')
+  refs.lightbox.src = source;
+  refs.lightbox.alt = alt
+  window.addEventListener('keydown', onKeypress)
 }
 
-function onBackdropCloseClick(evt) {
-  if (evt.currentTarget === evt.target) {
-    onCloseModal();
+function onModalClose() { 
+  refs.modal.classList.remove('is-open')
+  refs.lightbox.src = '';
+  refs.lightbox.alt = '';  
+  window.removeEventListener('keydown', onKeypress)
+}
+
+function onModalBackdropClose(event) { 
+  if (event.currentTarget === event.target) { 
+    onModalClose()
   }
 }
 
-function onArrowPressSibling(evt) {
-  const currentItem = images.findIndex(({original}) => original === refs.modalImage.src)
-//  console.log(refs.modalImage)
-  if (evt.code === 'ArrowRight') {
-    // onLeftSide();
-    refs.modalImage.src = `${images[(currentItem + 1) % images.length].original}`;
-  } else if (evt.code === 'ArrowLeft') {
-    // onRightSide();
-    if (currentItem === 0) {
-    refs.modalImage.src = `${images[(currentItem + images.length - 1) % images.length].original}`;
-  } else {
-    refs.modalImage.src = `${images[(currentItem + 1) % images.length].original}`;
-   }
-  }
+function findIndex() {
+  return images.findIndex(({ original }) => original === refs.lightbox.src)
 }
 
-// function onRightSide() { 
-//   refs.modalImage.src = `${images[(currentItem + 1) % images.length].original}`;
-  
+
+function onNextImg() {
+  currentImgIdx = findIndex()
+  currentImgIdx = images.length - 1 === currentImgIdx ?0 :currentImgIdx + 1
+  const { original, description } = images[currentImgIdx]
+  refs.lightbox.src = original;
+  refs.lightbox.alt = description;     
+}
+
+function onPrevImg() {
+  currentImgIdx = findIndex()
+  currentImgIdx = currentImgIdx === 0 ?images.length - 1 :currentImgIdx - 1
+  const { original, description } = images[currentImgIdx]
+  refs.lightbox.src = original;
+  refs.lightbox.alt = description; 
+
+}
+
+function onKeypress(event) { 
+  event.code === 'Escape' && onModalClose()
+  event.code === 'ArrowRight' && onNextImg()
+  event.code === 'ArrowLeft' && onPrevImg()
+  }
+
+
+
+// ___________________________________________________________________
+
+// import galleryItems from "./gallery-items.js";
+
+
+// const refs = {
+//   $gallery: document.querySelector("ul.js-gallery"),
+//   $lightbox: document.querySelector('div.js-lightbox'),
+//   $lightboxImg: document.querySelector('.lightbox__image'),
+//   $lightboxCloseBtn: document.querySelector('button[data-action="close-lightbox"]'),
+//   // overlay: document.querySelector('div.lightbox__overlay'),
 // }
 
-// function onLeftSide() { 
-//   if (currentItem === 0) {
-//     refs.modalImage.src = `${images[(currentItem + images.length - 1) % images.length].original}`;
-//   } else {
-//     refs.modalImage.src = `${images[(currentItem + 1) % images.length].original}`;
-//    }
+// const { $gallery, $lightbox, $lightboxImg, $lightboxCloseBtn } = refs
+
+// let currentImgIdx = null
+
+// $gallery.addEventListener('click', handleClickGallery)
+// $lightboxCloseBtn.addEventListener('click', handleClickCloseBtn)
+
+// function handleClickGallery(event) { 
+//   event.preventDefault()
+  
+//   const { dataset, alt, nodeName } = event.target;
+
+//   if (nodeName === 'IMG') { 
+//    const  { source, id } = dataset
+   
+//     handleOpenModal(source, alt, +id) 
+//   }
 // }
+
+// function handleOpenModal(src, alt, id){
+//     $lightbox.classList.add('is-open')
+//     $lightboxImg.src = src
+//     $lightboxImg.alt = alt
+//   currentImgIdx = id
+//   window.addEventListener('keydown', handleKeypress)
+// }
+     
+// function handleClickCloseBtn() { 
+//   handleCloseModal()
+// }
+
+// function handleCloseModal() { 
+//     $lightbox.classList.remove('is-open')
+//     $lightboxImg.src = ''
+//     $lightboxImg.alt = ''
+//     currentImgIdx = null
+//     window.removeEventListener('keydown', handleKeypress)
+// }
+
+// function handleKeypress({ code }) { 
+//   code === 'Escape' && handleCloseModal()
+//   code === 'ArrowRight' && handleNextImg()
+//   code === 'ArrowLeft' && handlePrevImg()
+// }
+
+// function handleNextImg() { 
+//   currentImgIdx = galleryItems.length - 1 === currentImgIdx ? 0 : currentImgIdx + 1
+//   const { original, description } = galleryItems[currentImgIdx]
+//     $lightboxImg.src = original
+//     $lightboxImg.alt = description
+// }
+
+// function handlePrevImg() { 
+//     currentImgIdx = currentImgIdx === 0? galleryItems.length - 1 : currentImgIdx - 1
+//     const { original, description } = galleryItems[currentImgIdx]
+//     $lightboxImg.src = original
+//     $lightboxImg.alt = description  
+// }
+
+// function createGalleryElementMurkup({ preview, original, description }, i) { 
+//   return `
+// <li class="gallery__item">
+//   <a
+//     class="gallery__link"
+//     href="${original}"
+//   >
+//     <img
+//       data-id="${i}"
+//       class="gallery__image"
+//       src="${preview}"
+//       data-source="${original}"
+//       alt="${description}"
+//     />
+//   </a>
+// </li>
+// `
+// }
+
+// function createGalleryMarkup(items) { 
+//   return items.map(createGalleryElementMurkup).join('')
+// }
+
+// function renderGallery(markup) { 
+//   $gallery.insertAdjacentHTML('beforeend', markup)
+// }
+
+// renderGallery(createGalleryMarkup(galleryItems))
