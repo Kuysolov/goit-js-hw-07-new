@@ -90,9 +90,12 @@ function onPrevImg() {
 }
 
 function onKeypress(event) { 
+  console.log(event.code)
   event.code === 'Escape' && onModalClose()
   event.code === 'ArrowRight' && onNextImg()
   event.code === 'ArrowLeft' && onPrevImg()
+  event.code === 'Space' && onNextImg()
+  event.code === 'Backspace' && onPrevImg()
   }
 
 
